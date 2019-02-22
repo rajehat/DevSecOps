@@ -1,10 +1,12 @@
+#TAG @slow- 30 sec, @reallyslow- 10 mins
+@reallyslow
 Feature: Checkfor cross site scripting (XSS) vulnerability using arachini against gruyere
-
-Given "arachini" is installed
-
-When I launch an "arachini" attack with:
-"""
-arachini --checks=XSS --scope-page-limit=2 http://172.17.0.2:8008/login
-"""
-
-Then the output should contain "0 issues were detected"
+#similar to global variable
+Background:
+  Given "arachini" is installed
+Scenario: Do a full XSS
+  When I launch an "arachini" attack with:
+  """
+  arachini --checks=XSS --scope-page-limit=2 http://172.17.0.2:8008/login
+  """
+  Then the output should contain "0 issues were detected"
