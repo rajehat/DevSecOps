@@ -1,0 +1,23 @@
+sudo: required
+language: ruby
+
+services:
+  - docker
+ 
+before_install:
+- docker stop gruyere || true
+- docker pull karthequian/gruyere:latest
+- docker run --rm -d -p 8008:8008 --name gruyere karthequian/gruyere:latest
+- docker pull gauntlt/gauntlt
+- docker ps -a
+- chmod +x ./scripts/ip-config.sh
+- ./scripts/ip-config.sh
+
+script:
+  - cat ./config/cucumber.yml
+  - docker run -t --rm -v $(pwd):/working -w /working gauntlt/gauntlt ./Tests/xss.attack
+  - docker run -t --rm -v $(pwd):/working -w /working gauntlt/gauntlt ./Tests/allowed_methods.attack
+  - docker run -t --rm -v $(pwd):/working -w /working gauntlt/gauntlt ./Tests/form_upload.attack
+  - docker run -t --rm -v $(pwd):/working -w /working gauntlt/gauntlt ./Tests/insecure_cookies.attack
+  - docker run -t --rm -v $(pwd):/working -w /working gauntlt/gauntlt ./Tests/mixed_resource.attack
+  - docker run -t --rm -v $(pwd):/working -w /working gauntlt/gauntlt ./Tests/session_fixation.attack
